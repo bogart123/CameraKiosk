@@ -76,15 +76,16 @@ public class EditSavePhotoFragment extends Fragment {
         } else {
             topView.getLayoutParams().width = imageParameters.mCoverWidth;
         }
-
+        Log.d(TAG, "original bitmap width " + rotation);
+//        rotation = 450;
         rotatePicture(rotation, data, photoImageView);
 
-        view.findViewById(R.id.save_photo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                savePicture();
-            }
-        });
+//        view.findViewById(R.id.save_photo).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                savePicture();
+//            }
+//        });
     }
 
     private void rotatePicture(int rotation, byte[] data, ImageView photoImageView) {
@@ -95,6 +96,7 @@ public class EditSavePhotoFragment extends Fragment {
 
             Matrix matrix = new Matrix();
             matrix.postRotate(rotation);
+            matrix.preScale(-1.0f, 1.0f);
 
             bitmap = Bitmap.createBitmap(
                     oldBitmap, 0, 0, oldBitmap.getWidth(), oldBitmap.getHeight(), matrix, false

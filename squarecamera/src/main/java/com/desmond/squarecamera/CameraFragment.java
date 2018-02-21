@@ -323,6 +323,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
             // the camera image to match the natural orientation of the device
             displayOrientation = (cameraInfo.orientation + degrees) % 360;
             displayOrientation = (360 - displayOrientation) % 360;
+
         } else {
             displayOrientation = (cameraInfo.orientation - degrees + 360) % 360;
         }
@@ -520,7 +521,8 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         Camera.getCameraInfo(mCameraID, info);
 
         if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
-            rotation = (info.orientation - orientation + 360) % 360;
+//            rotation = (info.orientation - orientation + 360) % 360;
+            rotation = (info.orientation - orientation ) % 180;
         } else {
             rotation = (info.orientation + orientation) % 360;
         }

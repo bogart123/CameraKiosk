@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -40,6 +41,7 @@ public class ImageUtility {
     public static Bitmap rotatePicture(Context context, int rotation, byte[] data) {
         Bitmap bitmap = decodeSampledBitmapFromByte(context, data);
 
+        Log.d("ImageUti","rotation1111 " + rotation);
         if (rotation != 0) {
             Bitmap oldBitmap = bitmap;
 
