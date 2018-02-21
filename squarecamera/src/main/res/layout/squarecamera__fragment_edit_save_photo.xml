@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:layout_weight="1"
+            android:onClick="onShare"
             android:src="@drawable/squarecamera__share"
             android:background="@android:color/transparent"
             />
@@ -52,6 +53,7 @@
             android:layout_weight="1"
             android:src="@drawable/squarecamera__edit"
             android:background="@android:color/transparent"
+            android:onClick="onEdit"
             />
 
 
@@ -63,6 +65,7 @@
             android:layout_weight="1"
             android:src="@drawable/squarecamera__delete"
             android:background="@android:color/transparent"
+            android:onClick="onDelete"
             />
 
     </LinearLayout>
