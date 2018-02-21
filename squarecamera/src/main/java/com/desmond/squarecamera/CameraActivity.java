@@ -5,6 +5,7 @@ import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.Size;
 import android.view.View;
 import android.view.WindowManager;
@@ -53,6 +54,18 @@ public class CameraActivity extends AppCompatActivity {
     }
     public void onCancel(View view) {
         getSupportFragmentManager().popBackStack();
+    }
+
+    public void onShare(View view) {
+        Log.d(TAG, " onshare ");
+    }
+
+    public void onEdit (View view) {
+        Log.d(TAG, " onedit ");
+    }
+
+    public void onDelete (View view) {
+        Log.d(TAG, " ondelete ");
     }
 
 }
