@@ -66,7 +66,12 @@ public class KioskService extends Service {
         if(PrefUtils.isKioskModeActive(ctx)) {
             // is App in background?
             if(isInBackground()) {
-                restoreApp(); // restore!
+                boolean forceStop = CameraSettingPreferences.getGallery(ctx);
+                Log.d(TAG, " forceStop " + forceStop);
+                if(!forceStop)
+                {
+                    restoreApp(); // restore!
+                }
             }
         }
     }

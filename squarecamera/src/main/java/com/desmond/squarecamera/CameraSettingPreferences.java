@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 /**
  * Created by desmond on 4/10/15.
@@ -11,6 +12,7 @@ import android.support.annotation.NonNull;
 public class CameraSettingPreferences {
 
     private static final String FLASH_MODE = "squarecamera__flash_mode";
+    private static boolean clickGallery = false;
 
     private static SharedPreferences getCameraSettingPreferences(@NonNull final Context context) {
         return context.getSharedPreferences("com.desmond.squarecamera", Context.MODE_PRIVATE);
@@ -34,5 +36,16 @@ public class CameraSettingPreferences {
         }
 
         return Camera.Parameters.FLASH_MODE_AUTO;
+    }
+
+    public static void saveGallery(@NonNull final Context context, @NonNull final boolean inOut) {
+        clickGallery = inOut;
+        Log.d("CameraSetting", " clickGallery " + clickGallery);
+    }
+
+    public static boolean getGallery(@NonNull final Context context)
+    {
+        Log.d("CameraSetting", " clickGallery " + clickGallery);
+        return clickGallery;
     }
 }

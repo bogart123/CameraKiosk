@@ -19,12 +19,9 @@ public class CameraActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        getWindow().addFlags(WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY);
-//        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setTheme(R.style.squarecamera__CameraFullScreenTheme);
+//        getWindow().addFlags(WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY);
         super.onCreate(savedInstanceState);
 
         if (getSupportActionBar() != null) {
@@ -66,6 +63,12 @@ public class CameraActivity extends AppCompatActivity {
 
     public void onDelete (View view) {
         Log.d(TAG, " ondelete ");
+    }
+
+    @Override
+    public void onBackPressed() {
+        // nothing to do here
+        // … really
     }
 
 }

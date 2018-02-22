@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Size;
@@ -15,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -60,6 +62,11 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     }
 
     public CameraFragment() {}
+
+    private static final int SELECT_IMAGE = 1;
+    private Bitmap currentImage;
+    private ImageView selectedImage;
+
 
     @Override
     public void onAttach(Context context) {
@@ -150,7 +157,14 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
 //                sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
 //                        Uri.parse("file://" + Environment.getExternalStorageDirectory())));
 
-                openFolderChooserDialogSAF(false);
+//                openFolderChooserDialogSAF(false);
+
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                photoPickerIntent.setType("image/*");
+                startActivityForResult(photoPickerIntent, 1);
+
+               CameraSettingPreferences.saveGallery(getActivity(),true);
+
             }
         });
 
@@ -239,7 +253,8 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         }
 
         getCamera(mCameraID);
-        startCameraPreview();
+        if(mCamera != null)
+            startCameraPreview();
     }
 
     /**
@@ -331,7 +346,8 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         mImageParameters.mDisplayOrientation = displayOrientation;
         mImageParameters.mLayoutOrientation = degrees;
 
-        mCamera.setDisplayOrientation(mImageParameters.mDisplayOrientation);
+        if(mCamera != null)
+            mCamera.setDisplayOrientation(mImageParameters.mDisplayOrientation);
     }
 
     /**
@@ -438,7 +454,8 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     @Override
     public void onResume() {
         super.onResume();
-
+        Log.d(" CameraFrag ", " onresume ");
+        CameraSettingPreferences.saveGallery(getContext(), false);
         if (mCamera == null) {
             restartPreview();
         }
@@ -465,7 +482,8 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         mSurfaceHolder = holder;
 
         getCamera(mCameraID);
-        startCameraPreview();
+        if(mCamera != null)
+            startCameraPreview();
     }
 
     @Override
@@ -480,7 +498,21 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != Activity.RESULT_OK) return;
+
+        if (resultCode == Activity.RESULT_OK) {
+            Uri photoUri = data.getData();
+            if (photoUri != null) {
+                try {
+                    currentImage = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), photoUri);
+                    selectedImage.setImageBitmap(currentImage);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (resultCode != Activity.RESULT_OK)
+            return;
 
         switch (requestCode) {
             case 1:
