@@ -2,6 +2,7 @@ package fimobile.technology.inc.CameraKiosk;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -12,6 +13,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.desmond.squarecamera.CameraSettingPreferences;
 import com.desmond.squarecamera.ImageUtility;
 
 import java.util.ArrayList;
@@ -53,35 +56,27 @@ public class CameraActivity extends AppCompatActivity {
 //        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        setContentView(R.layout.activity_camera);
-
-//        if (ContextCompat.checkSelfPermission(getBaseContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(CameraActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_REQUEST);
-//        } else if (ContextCompat.checkSelfPermission(getBaseContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-//            ActivityCompat.requestPermissions(CameraActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_REQUEST);
-//        } else {
-//            initialize();
-//        }
 
         Display display = getWindowManager().getDefaultDisplay();
         mSize = new Point();
         display.getSize(mSize);
 
-        PrefUtils.setKioskModeActive(true, getApplicationContext());
-
         final String permission = Manifest.permission.CAMERA;
         if (ContextCompat.checkSelfPermission(CameraActivity.this, permission)
                 != PackageManager.PERMISSION_GRANTED) {
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(CameraActivity.this, permission)) {
-//                showPermissionRationaleDialog("Test", permission);
-//            } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(CameraActivity.this, permission)) {
+                showPermissionRationaleDialog("Test", permission);
+            } else {
                 requestForPermission(permission);
-//            }
+            }
+        } else {
+            Log.d("CameraActivity", " naglaunch oncreate");
+            PrefUtils.setKioskModeActive(true, getApplicationContext());
+            launch();
         }
-        launch();
-    }
 
-    private void initialize() {
+//
+
 
     }
 
@@ -92,6 +87,7 @@ public class CameraActivity extends AppCompatActivity {
             // Close every kind of system dialog
             Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
             sendBroadcast(closeDialog);
+            stopService(new Intent(this, KioskService.class));
         }
     }
 
@@ -102,10 +98,21 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+Log.d(" CameraAct ", " onpause ");
+//        stopService(new Intent(this, KioskService.class));
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        launch();
+        Log.d(" CameraAct ", " onresume ");
+        CameraSettingPreferences.saveGallery(this, false);
+//        launch();
+//        startService(new Intent(this, KioskService.class));
     }
+
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -149,6 +156,8 @@ public class CameraActivity extends AppCompatActivity {
                 final boolean isGranted = numOfRequest == 1
                         && PackageManager.PERMISSION_GRANTED == grantResults[numOfRequest - 1];
                 if (isGranted) {
+                    Log.d("CameraActivity", " naglaunch requestpermission");
+                    PrefUtils.setKioskModeActive(true, getApplicationContext());
                     launch();
                 }
                 break;
@@ -156,6 +165,25 @@ public class CameraActivity extends AppCompatActivity {
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+    private void showPermissionRationaleDialog(final String message, final String permission) {
+        new AlertDialog.Builder(CameraActivity.this)
+                .setMessage(message)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        CameraActivity.this.requestForPermission(permission);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .create()
+                .show();
     }
 
 }

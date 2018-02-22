@@ -46,7 +46,9 @@ public class AppContext  extends Application {
         return wakeLock;
     }
 
-    private void startKioskService() { // ... and this method
+    public void startKioskService()
+    { // ... and this method
         startService(new Intent(this, KioskService.class));
     }
+
 }
